@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1048625376516",
+    "project_id": "ewatchlist11",
+    "storage_bucket": "ewatchlist11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1048625376516:android:074e97ef60bd29b8277451",
+        "android_client_info": {
+          "package_name": "com.example.ewatchlist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1048625376516-8q7iiuueoep45jl701gvfkank2qaue86.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQK6tOfaKtoRGRtNV7_-8_1ecr91aPQBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1048625376516-8q7iiuueoep45jl701gvfkank2qaue86.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
