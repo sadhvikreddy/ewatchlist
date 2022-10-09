@@ -7,6 +7,7 @@ class Movie extends AbstractMeta {
   late String? posterUrl;
   late String? overview;
   late String displayType;
+  late String type;
   final GlobalVariables variables = GlobalVariables();
   late Color colorCode = Colors.white;
   final String posterPlace = 'assets/images/posterPlace.png';
@@ -54,6 +55,10 @@ class Movie extends AbstractMeta {
         colorCode: cc);
   }
 
+  void setType(String mtype) {
+    type = mtype;
+  }
+
   Widget getImage(bool poster) {
     if (poster) {
       return Image.network(
@@ -81,14 +86,17 @@ class Movie extends AbstractMeta {
       return Padding(
           padding: const EdgeInsets.only(top: 25),
           child: FlipCard(
-            fill: Fill.fillBack,
-            direction: FlipDirection.HORIZONTAL,
+            direction: FlipDirection.VERTICAL,
+            fill: Fill.fillFront,
             front: Container(
+              width: 340,
+              height: 510,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Card(
                 elevation: 10,
+                color: colorCode,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 child: ClipRRect(
@@ -98,6 +106,8 @@ class Movie extends AbstractMeta {
               ),
             ),
             back: Container(
+              width: 340,
+              height: 510,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
               ),

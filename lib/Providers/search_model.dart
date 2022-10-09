@@ -4,8 +4,11 @@ import 'dart:convert';
 import 'package:ewatchlist/Classes/abstract_meta.dart';
 import 'package:ewatchlist/Classes/movie.dart';
 import 'package:ewatchlist/Providers/global_variables.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum MediaType { movie, tv, anime }
 
@@ -92,6 +95,60 @@ class SearchModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void bundleForDb(BuildContext bcontext, String uid) {
+    Movie s;
+    movieData.then((value) {
+      s = value;
+      if (mt == MediaType.movie) {
+        s.setType("movie");
+      } else if (mt == MediaType.tv) {
+        s.setType("tv");
+      } else {
+        s.setType("anime");
+      }
+
+      CollectionReference watchlists =
+          FirebaseFirestore.instance.collection('watchlists');
+      watchlists.doc(uid).collection('medialist').doc(s.id.toString()).set({
+        "id": s.id,
+        "title": s.title,
+        "year": s.year,
+        "overview": s.overview,
+        "watched": false,
+        "poster": s.posterUrl,
+        "type": s.type
+      }).then((value) {
+        showDialog(
+            context: bcontext,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Success"),
+                content: Text("${s.title} added to your watchlist"),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: (() => Navigator.pop(context, "Done")),
+                      child: const Text("Done"))
+                ],
+              );
+            });
+      }).catchError((error) {
+        showDialog(
+            context: bcontext,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Fail"),
+                content: Text("Following error occured: ${error.toString()}"),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: (() => Navigator.pop(context, "Done")),
+                      child: const Text("Done"))
+                ],
+              );
+            });
+      });
+    });
+  }
+
   Future<List<AbstractMeta>> apiCall() async {
     String query = "movie";
     if (mt == MediaType.tv) {
@@ -113,6 +170,32 @@ class SearchModel extends ChangeNotifier {
       return movieList;
     } else {
       throw Exception("Failed to load");
+    }
+  }
+
+  void addToWatchlist(BuildContext bcontext) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final String uid = user.uid.toString();
+      bundleForDb(bcontext, uid);
+    } else {
+      showDialog(
+          context: bcontext,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("NO USER LOGIN!"),
+              content: const Text("You must be logged in to add watchlist."),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () => Navigator.pop(context, 'Cancel'),
+                    child: const Text('Later')),
+                TextButton(
+                    onPressed: () => Navigator.pushNamed(context, '/settings'),
+                    child: const Text('Sign In')),
+              ],
+            );
+          });
     }
   }
 }

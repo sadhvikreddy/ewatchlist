@@ -13,7 +13,33 @@ class Search extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<SearchModel>(builder: (context, search, child) {
-      return Scaffold(
+      return MaterialApp(
+          home: Scaffold(
+        appBar: AppBar(
+          title: Image.asset(
+            'assets/images/logo.png',
+            width: 75,
+            height: 75,
+          ),
+          toolbarHeight: 100,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(25),
+                bottomLeft: Radius.circular(25)),
+          ),
+          elevation: 5,
+          backgroundColor: const Color.fromRGBO(54, 68, 79, 0.8),
+          actions: <Widget>[
+            Padding(
+                padding: const EdgeInsets.only(right: 30),
+                child: IconButton(
+                    iconSize: 50,
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/settings');
+                    },
+                    icon: const Icon(Icons.account_circle_sharp)))
+          ],
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -34,23 +60,30 @@ class Search extends StatelessWidget {
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5),
+                  padding: const EdgeInsets.only(left: 25, right: 5),
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Expanded(
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(0),
                             horizontalTitleGap: -10,
-                            title: const Text(
-                              'Movies',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(54, 68, 79, 1)),
-                            ),
+                            title: Text('Movies',
+                                style: TextStyle(
+                                    color: (search.mt == MediaType.movie)
+                                        ? Colors.green
+                                        : const Color.fromRGBO(54, 68, 79, 1))),
                             leading: Radio(
-                              fillColor: MaterialStateColor.resolveWith(
-                                (states) => const Color.fromRGBO(54, 68, 79, 1),
-                              ),
+                              fillColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                      ((Set<MaterialState> states) {
+                                return (search.mt == MediaType.movie)
+                                    ? Colors.green
+                                    : const Color.fromRGBO(54, 68, 79, 1);
+                              })),
+                              // fillColor: MaterialStateColor.resolveWith(
+                              //   (states) => const Color.fromRGBO(54, 68, 79, 1),
+                              // ),
                               value: MediaType.movie,
                               groupValue: search.mt,
                               onChanged: (MediaType? value) {
@@ -63,15 +96,21 @@ class Search extends StatelessWidget {
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(0),
                             horizontalTitleGap: -10,
-                            title: const Text(
+                            title: Text(
                               'TV Show',
                               style: TextStyle(
-                                  color: Color.fromRGBO(54, 68, 79, 1)),
+                                  color: (search.mt == MediaType.tv)
+                                      ? Colors.green
+                                      : const Color.fromRGBO(54, 68, 79, 1)),
                             ),
                             leading: Radio(
-                              fillColor: MaterialStateColor.resolveWith(
-                                  (states) =>
-                                      const Color.fromRGBO(54, 68, 79, 1)),
+                              fillColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                      ((Set<MaterialState> states) {
+                                return (search.mt == MediaType.tv)
+                                    ? Colors.green
+                                    : const Color.fromRGBO(54, 68, 79, 1);
+                              })),
                               value: MediaType.tv,
                               groupValue: search.mt,
                               onChanged: (MediaType? value) {
@@ -84,15 +123,19 @@ class Search extends StatelessWidget {
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(0),
                             horizontalTitleGap: -10,
-                            title: const Text(
-                              'Anime',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(54, 68, 79, 1)),
-                            ),
+                            title: Text('Anime',
+                                style: TextStyle(
+                                    color: (search.mt == MediaType.anime)
+                                        ? Colors.green
+                                        : const Color.fromRGBO(54, 68, 79, 1))),
                             leading: Radio(
-                              fillColor: MaterialStateColor.resolveWith(
-                                  (states) =>
-                                      const Color.fromRGBO(54, 68, 79, 1)),
+                              fillColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                      ((Set<MaterialState> states) {
+                                return (search.mt == MediaType.anime)
+                                    ? Colors.green
+                                    : const Color.fromRGBO(54, 68, 79, 1);
+                              })),
                               value: MediaType.anime,
                               groupValue: search.mt,
                               onChanged: (MediaType? value) {
@@ -193,7 +236,11 @@ class Search extends StatelessWidget {
                                                                 ],
                                                               )),
                                                           ElevatedButton(
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                search
+                                                                    .addToWatchlist(
+                                                                        context);
+                                                              },
                                                               style:
                                                                   ButtonStyle(
                                                                       backgroundColor: const MaterialStatePropertyAll<
@@ -232,10 +279,17 @@ class Search extends StatelessWidget {
                           },
                         ));
                       } else {
-                        return const Text(
-                          "No data found. please try again",
-                          style: TextStyle(fontSize: 16),
-                        );
+                        if (search.searchTerm.isEmpty) {
+                          return const Text(
+                            "Start typing...",
+                            style: TextStyle(fontSize: 16),
+                          );
+                        } else {
+                          return const Text(
+                            "No data found. please try again",
+                            style: TextStyle(fontSize: 16),
+                          );
+                        }
                       }
                     } else {
                       return const Center(
@@ -247,7 +301,7 @@ class Search extends StatelessWidget {
             ],
           ),
         ),
-      );
+      ));
     });
   }
 }

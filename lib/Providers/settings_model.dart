@@ -6,23 +6,24 @@ enum UserState { signedIn, signedOut, signUp, loading }
 class SettingsModel extends ChangeNotifier {
   UserState userState = UserState.loading;
   User? userMeta;
-  String userName = 'Person';
+  String userName = '';
+  String chUserName = '';
+  String chEmail = '';
   String statusMessages = '';
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
 
   SettingsModel() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user != null) {
-        userState = UserState.signedIn;
-        userMeta = user;
-        notifyListeners();
-      } else {
-        userState = UserState.signedOut;
-        notifyListeners();
-      }
-    });
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      userState = UserState.signedIn;
+      userMeta = user;
+      notifyListeners();
+    } else {
+      userState = UserState.signedOut;
+      notifyListeners();
+    }
   }
 
   void updateUserState(UserState x) {
@@ -31,24 +32,29 @@ class SettingsModel extends ChangeNotifier {
   }
 
   Future<void> triggerSignup(String name, String email, String password) async {
-    try {
-      final creds = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-      creds.user?.updateDisplayName(name);
-      userName = name;
-      userState = UserState.signedIn;
+    if (name.isEmpty) {
+      statusMessages = "Enter your name";
       notifyListeners();
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        statusMessages = "Weak Password!";
+    } else {
+      try {
+        final creds = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+        creds.user?.updateDisplayName(name);
+        userName = name;
+        userState = UserState.signedIn;
         notifyListeners();
-      } else if (e.code == 'email-already-in-use') {
-        statusMessages = "Email exists, sign in instead";
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          statusMessages = "Weak Password!";
+          notifyListeners();
+        } else if (e.code == 'email-already-in-use') {
+          statusMessages = "Email exists, sign in instead";
+          notifyListeners();
+        }
+      } catch (e) {
+        statusMessages = e.toString();
         notifyListeners();
       }
-    } catch (e) {
-      statusMessages = e.toString();
-      notifyListeners();
     }
   }
 
@@ -57,7 +63,7 @@ class SettingsModel extends ChangeNotifier {
       final creds = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       userMeta = creds.user;
-      userName = creds.user?.displayName ?? "Person";
+      userName = creds.user?.displayName ?? "";
       userState = UserState.signedIn;
       notifyListeners();
     } on FirebaseAuthException catch (e) {
@@ -74,8 +80,30 @@ class SettingsModel extends ChangeNotifier {
   Future<void> triggerSignout() async {
     await FirebaseAuth.instance.signOut();
     userMeta = null;
-    userName = "Person";
+    userName = "";
     userState = UserState.signedOut;
     notifyListeners();
+  }
+
+  void changeUsername() async {
+    if (chUserName.isNotEmpty) {
+      await userMeta?.updateDisplayName(chUserName).then(((value) {
+        userName = chUserName;
+        chUserName = "";
+      }));
+      notifyListeners();
+    } else {
+      statusMessages = "Username empty, Username update failed.";
+      notifyListeners();
+    }
+  }
+
+  void forgotPass() async {
+    if (chEmail.isNotEmpty) {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: chEmail);
+    } else {
+      statusMessages = "Email address is empty/invalid";
+      notifyListeners();
+    }
   }
 }
