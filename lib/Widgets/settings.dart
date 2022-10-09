@@ -19,135 +19,137 @@ class Settings extends StatelessWidget {
                   label: const Text('Search'),
                   icon: const Icon(Icons.search),
                 ),
-                body: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ListView(
-                      children: <Widget>[
-                        Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(10),
-                            child: Image.asset(
-                              'assets/images/logo.png',
-                              height: 100,
-                              width: 100,
-                            )),
-                        Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(10),
-                            child: const Text(
-                              'Sign in',
-                              style: TextStyle(fontSize: 20),
-                            )),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          child: TextField(
-                            controller: settings.emailController,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Email',
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                          child: TextField(
-                            obscureText: true,
-                            controller: settings.passController,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Password',
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext ctx) {
-                                  return AlertDialog(
-                                    title: const Text("Forgot password?"),
-                                    content: TextField(
-                                      onChanged: ((value) {
-                                        settings.chEmail = value;
-                                      }),
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.red)
-                                            // Color.fromRGBO(54, 68, 79, 1)),
-                                            ),
-                                        labelText: 'Email',
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, 'Cancel'),
-                                          child: const Text('Cancel')),
-                                      TextButton(
-                                          onPressed: () {
-                                            settings.forgotPass();
-                                          },
-                                          child:
-                                              const Text('Request Email link')),
-                                    ],
-                                  );
-                                });
-                          },
-                          child: const Text(
-                            'Forgot Password?',
-                            style: TextStyle(
-                                color: Color.fromRGBO(54, 68, 79, 0.8)),
-                          ),
-                        ),
-                        Container(
-                            color: const Color.fromRGBO(54, 68, 79, 0),
-                            height: 50,
-                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                shape: MaterialStatePropertyAll<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                )),
-                                foregroundColor:
-                                    const MaterialStatePropertyAll<Color>(
-                                        Colors.white),
-                                backgroundColor:
-                                    const MaterialStatePropertyAll<Color>(
-                                        Color.fromRGBO(54, 69, 79, 1)),
-                              ),
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () {
-                                settings.triggerSignin(
-                                    settings.passController.text,
-                                    settings.emailController.text);
-                              },
-                            )),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                body: Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: ListView(
                           children: <Widget>[
-                            const Text('Does not have account?'),
+                            Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(10),
+                                child: Image.asset(
+                                  'assets/images/logo.png',
+                                  height: 100,
+                                  width: 100,
+                                )),
+                            Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(10),
+                                child: const Text(
+                                  'Sign in',
+                                  style: TextStyle(fontSize: 20),
+                                )),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              child: TextField(
+                                controller: settings.emailController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Email',
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              child: TextField(
+                                obscureText: true,
+                                controller: settings.passController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Password',
+                                ),
+                              ),
+                            ),
                             TextButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext ctx) {
+                                      return AlertDialog(
+                                        title: const Text("Forgot password?"),
+                                        content: TextField(
+                                          onChanged: ((value) {
+                                            settings.chEmail = value;
+                                          }),
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.red)
+                                                // Color.fromRGBO(54, 68, 79, 1)),
+                                                ),
+                                            labelText: 'Email',
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  context, 'Cancel'),
+                                              child: const Text('Cancel')),
+                                          TextButton(
+                                              onPressed: () {
+                                                settings.forgotPass();
+                                              },
+                                              child: const Text(
+                                                  'Request Email link')),
+                                        ],
+                                      );
+                                    });
+                              },
                               child: const Text(
-                                'Sign up',
+                                'Forgot Password?',
                                 style: TextStyle(
-                                    fontSize: 16,
                                     color: Color.fromRGBO(54, 68, 79, 0.8)),
                               ),
-                              onPressed: () {
-                                settings.updateUserState(UserState.signUp);
-                              },
                             ),
+                            Container(
+                                color: const Color.fromRGBO(54, 68, 79, 0),
+                                height: 50,
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    shape: MaterialStatePropertyAll<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                    )),
+                                    foregroundColor:
+                                        const MaterialStatePropertyAll<Color>(
+                                            Colors.white),
+                                    backgroundColor:
+                                        const MaterialStatePropertyAll<Color>(
+                                            Color.fromRGBO(54, 69, 79, 1)),
+                                  ),
+                                  child: const Text(
+                                    'Login',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onPressed: () {
+                                    settings.triggerSignin(
+                                        settings.passController.text,
+                                        settings.emailController.text);
+                                  },
+                                )),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                const Text('Does not have account?'),
+                                TextButton(
+                                  child: const Text(
+                                    'Sign up',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Color.fromRGBO(54, 68, 79, 0.8)),
+                                  ),
+                                  onPressed: () {
+                                    settings.updateUserState(UserState.signUp);
+                                  },
+                                ),
+                              ],
+                            ),
+                            Text(settings.statusMessages),
                           ],
-                        ),
-                        Text(settings.statusMessages),
-                      ],
-                    ))));
+                        )))));
       } else if (settings.userState == UserState.signUp) {
         return MaterialApp(
             home: Scaffold(
@@ -260,7 +262,8 @@ class Settings extends StatelessWidget {
                   label: const Text('Search'),
                   icon: const Icon(Icons.search),
                 ),
-                body: Center(
+                body: Align(
+                    alignment: Alignment.center,
                     child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: ListView(children: <Widget>[
@@ -269,8 +272,8 @@ class Settings extends StatelessWidget {
                               padding: const EdgeInsets.all(10),
                               child: Image.asset(
                                 'assets/images/logo.png',
-                                height: 100,
-                                width: 100,
+                                height: 200,
+                                width: 200,
                               )),
                           Container(
                               alignment: Alignment.center,
@@ -280,10 +283,12 @@ class Settings extends StatelessWidget {
                                 style: const TextStyle(fontSize: 20),
                               )),
                           Container(
-                              color: const Color.fromRGBO(54, 68, 79, 0),
-                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              height: 100,
                               padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  const EdgeInsets.fromLTRB(10, 20, 10, 20),
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                   shape: MaterialStatePropertyAll<
@@ -298,16 +303,19 @@ class Settings extends StatelessWidget {
                                       const MaterialStatePropertyAll<Color>(
                                           Color.fromRGBO(54, 69, 79, 1)),
                                 ),
-                                child: const Text('Go to Watchlist'),
+                                child: const Text('Go to Watchlist',
+                                    style: TextStyle(fontSize: 20)),
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/watchlist');
                                 },
                               )),
                           Container(
-                              color: const Color.fromRGBO(54, 68, 79, 0),
-                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              height: 100,
                               padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  const EdgeInsets.fromLTRB(10, 20, 10, 20),
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                   shape: MaterialStatePropertyAll<
@@ -322,7 +330,8 @@ class Settings extends StatelessWidget {
                                       const MaterialStatePropertyAll<Color>(
                                           Color.fromRGBO(54, 69, 79, 1)),
                                 ),
-                                child: const Text('Change Username'),
+                                child: const Text('Change Username',
+                                    style: TextStyle(fontSize: 20)),
                                 onPressed: () {
                                   showDialog(
                                       context: context,
@@ -350,19 +359,23 @@ class Settings extends StatelessWidget {
                                             TextButton(
                                                 onPressed: () {
                                                   settings.changeUsername();
+                                                  Navigator.pop(
+                                                      context, 'Cancel');
                                                 },
                                                 child: const Text(
-                                                    'Change username}')),
+                                                    'Change username')),
                                           ],
                                         );
                                       });
                                 },
                               )),
                           Container(
-                              color: const Color.fromRGBO(54, 68, 79, 0),
-                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              height: 100,
                               padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  const EdgeInsets.fromLTRB(10, 20, 10, 20),
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                   shape: MaterialStatePropertyAll<
@@ -377,7 +390,10 @@ class Settings extends StatelessWidget {
                                       const MaterialStatePropertyAll<Color>(
                                           Color.fromRGBO(54, 69, 79, 1)),
                                 ),
-                                child: const Text('Sign Out'),
+                                child: const Text(
+                                  'Sign Out',
+                                  style: TextStyle(fontSize: 20),
+                                ),
                                 onPressed: () {
                                   settings.triggerSignout();
                                 },

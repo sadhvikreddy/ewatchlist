@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewatchlist/Classes/abstract_meta.dart';
 import 'package:ewatchlist/Providers/global_variables.dart';
 import 'package:flip_card/flip_card.dart';
@@ -11,6 +12,7 @@ class Movie extends AbstractMeta {
   final GlobalVariables variables = GlobalVariables();
   late Color colorCode = Colors.white;
   final String posterPlace = 'assets/images/posterPlace.png';
+  bool watched = false;
 
   Movie.fullInfo({
     required super.title,
@@ -34,46 +36,72 @@ class Movie extends AbstractMeta {
         colorCode: cc);
   }
 
-  Movie.cardInfo({
-    required super.title,
-    required super.id,
-    required super.year,
-    required this.posterUrl,
-    this.overview,
-    required this.colorCode,
-  }) {
+  Movie.cardInfo(
+      {required super.title,
+      required super.id,
+      required super.year,
+      required this.posterUrl,
+      this.overview,
+      required this.watched,
+      required this.type}) {
     displayType = variables.card;
+    if (type == "movie") {
+      colorCode = const Color(0xFF808000);
+    } else if (type == "tv") {
+      colorCode = Colors.purple;
+    } else {
+      colorCode = Colors.blue;
+    }
   }
 
-  factory Movie.cardJson(
-      Map<String, dynamic> object, String posterU, Color cc) {
+  factory Movie.cardJson(QueryDocumentSnapshot<Object?> object) {
     return Movie.cardInfo(
         title: object['title'],
-        id: object['ids']['simkl'],
+        id: object['id'],
         year: object['year'],
-        posterUrl: posterU,
-        colorCode: cc);
+        posterUrl: object['poster'],
+        type: object['type'],
+        overview: object['overview'],
+        watched: object['watched']);
   }
 
   void setType(String mtype) {
     type = mtype;
   }
 
-  Widget getImage(bool poster) {
-    if (poster) {
-      return Image.network(
-        posterUrl!,
-        width: 340,
-        height: 510,
-        fit: BoxFit.fill,
-      );
+  Widget getImage(bool poster, String displayType) {
+    if (displayType == variables.full) {
+      if (poster) {
+        return Image.network(
+          posterUrl!,
+          width: 340,
+          height: 510,
+          fit: BoxFit.fill,
+        );
+      } else {
+        return Image.asset(
+          posterPlace,
+          width: 340,
+          height: 510,
+          fit: BoxFit.fill,
+        );
+      }
     } else {
-      return Image.asset(
-        posterPlace,
-        width: 340,
-        height: 510,
-        fit: BoxFit.fill,
-      );
+      if (poster) {
+        return Image.network(
+          posterUrl!,
+          width: 340 / 2,
+          height: 510 / 2,
+          fit: BoxFit.fill,
+        );
+      } else {
+        return Image.asset(
+          posterPlace,
+          width: 340 / 2,
+          height: 510 / 2,
+          fit: BoxFit.fill,
+        );
+      }
     }
   }
 
@@ -86,7 +114,7 @@ class Movie extends AbstractMeta {
       return Padding(
           padding: const EdgeInsets.only(top: 25),
           child: FlipCard(
-            direction: FlipDirection.VERTICAL,
+            direction: FlipDirection.HORIZONTAL,
             fill: Fill.fillFront,
             front: Container(
               width: 340,
@@ -101,7 +129,7 @@ class Movie extends AbstractMeta {
                     borderRadius: BorderRadius.circular(10)),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: getImage(poster),
+                  child: getImage(poster, displayType),
                 ),
               ),
             ),
@@ -148,13 +176,55 @@ class Movie extends AbstractMeta {
             ),
           ));
     } else {
-      return SizedBox(
-        width: 40,
-        child: Card(
-          elevation: 20,
-          child: getImage(poster),
-        ),
-      );
+      return Padding(
+          padding: const EdgeInsets.only(top: 25),
+          child: Container(
+              width: 340,
+              height: 510,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Stack(children: [
+                Card(
+                  elevation: 30,
+                  color: colorCode,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: getImage(poster, displayType),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: watched
+                            ? Stack(children: const <Widget>[
+                                Positioned(
+                                    left: 1.0,
+                                    top: 2.0,
+                                    child: Text("WATCHED",
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            color: Colors.black))),
+                                Text("WATCHED",
+                                    style: TextStyle(
+                                        fontSize: 25, color: Colors.white)),
+                              ])
+                            : Stack(children: const <Widget>[
+                                Positioned(
+                                    left: 1.0,
+                                    top: 2.0,
+                                    child: Text("",
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            color: Colors.black))),
+                                Text("",
+                                    style: TextStyle(
+                                        fontSize: 25, color: Colors.white)),
+                              ])))
+              ])));
     }
   }
 }

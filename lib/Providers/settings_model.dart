@@ -19,6 +19,7 @@ class SettingsModel extends ChangeNotifier {
     if (user != null) {
       userState = UserState.signedIn;
       userMeta = user;
+      userName = user.displayName ?? "";
       notifyListeners();
     } else {
       userState = UserState.signedOut;

@@ -15,6 +15,14 @@ class Search extends StatelessWidget {
     return Consumer<SearchModel>(builder: (context, search, child) {
       return MaterialApp(
           home: Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.pushNamed(context, '/watchlist');
+          },
+          backgroundColor: const Color.fromRGBO(54, 68, 79, 0.8),
+          label: const Text('Watchllist'),
+          icon: const Icon(Icons.search),
+        ),
         appBar: AppBar(
           title: Image.asset(
             'assets/images/logo.png',

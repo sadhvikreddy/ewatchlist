@@ -5,7 +5,7 @@ class GlobalVariables {
   final String _card = "CARD";
   late int itemId;
 
-  GlobalVariables() {}
+  GlobalVariables();
 
   String get clientID => _clientid;
   String get full => _full;
